@@ -117,3 +117,24 @@ class EmotionalLearningEngine:
 
     def mood(self) -> str:
         return str(self.emotion)
+
+    # -- serialization (for the volunteer swarm) ---------------------------
+
+    def export_state(self) -> dict:
+        """A plain, serializable snapshot of what this node has learned."""
+        return {
+            "value": {s: dict(a) for s, a in self.value.items()},
+            "emotion": self.emotion.snapshot(),
+            "steps": self.steps,
+        }
+
+    def import_state(self, state: dict) -> None:
+        """Load a shared snapshot in, replacing local estimates."""
+        for s, a in state.get("value", {}).items():
+            self.value[s] = {act: a.get(act, 0.0) for act in self.actions}
+        emo = state.get("emotion")
+        if emo:
+            for k, v in emo.items():
+                if k in self.emotion.intensities:
+                    self.emotion.intensities[k] = v
+        self.steps = state.get("steps", self.steps)

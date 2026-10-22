@@ -37,6 +37,17 @@ A forager learns which of three patches to prefer. You'll watch its value
 estimates converge while its dominant emotion shifts from surprise to joy as
 the good patch pays off.
 
+## Run the volunteer swarm
+
+```bash
+python3 -m emotional_engine.swarm_demo
+```
+
+Five volunteers opt in and each process tiny work units; the shared engine
+learns from their pooled deltas. Then most opt out and the rest carry it; then
+everyone opts out and it dies. This is the torrent-seeding / volunteer-compute
+model (BOINC- and BitTorrent-style) -- see `docs/ARCHITECTURE.md`.
+
 ## Run the tests
 
 ```bash
@@ -57,11 +68,14 @@ control, a real local opt-out, and nothing hidden. They're load-bearing.
 
 ```
 emotional_engine/
-  emotions.py   affective state: weighted values, decay, valence, arousal
-  engine.py     the learner; emotion modulates exploration and learning rate
-  demo.py       runnable foraging demo
+  emotions.py     affective state: weighted values, decay, valence, arousal
+  engine.py       the learner; emotion modulates exploration and learning rate
+  demo.py         runnable foraging demo
+  swarm.py        volunteer swarm: work units, opt-in nodes, coordinator
+  swarm_demo.py   runnable opt-in / opt-out swarm demo
 tests/
   test_engine.py
+  test_swarm.py
 docs/
-  ARCHITECTURE.md   consented multi-node design + hard boundaries
+  ARCHITECTURE.md   volunteer-swarm design + hard boundaries
 ```

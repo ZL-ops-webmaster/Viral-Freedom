@@ -101,3 +101,49 @@ federated-learning pattern.
 The emotional learning engine (`emotional_engine/`) is implemented and
 runnable today. The node/coordinator layer described here is the plan for the
 distributed version; it will be built against these invariants.
+
+---
+
+## The volunteer swarm (torrent-seeding model)
+
+The multi-node version is a **volunteer distributed computation**: the same
+pattern as BOINC, Folding@home, and SETI@home, with peer-to-peer
+distribution of the client and work units. It is implemented and runnable
+today in `emotional_engine/swarm.py`; run `python3 -m emotional_engine.swarm_demo`.
+
+### How the four properties are realized
+
+| Your words | Mechanism |
+|---|---|
+| "you opt in" | A person runs the client. A node does work only while opted in. |
+| "many channels to get the file" | P2P seeding + mirrors for the client and work units. Peers serve whoever *fetches*; nothing is pushed onto a machine. |
+| "each machine processes a tiny bit" | Work units: a seed + a few steps. A node pulls one, runs it on a local copy of the shared engine, returns a model delta. |
+| "if everyone outs, it dies" | The shared engine lives only in active nodes. Zero volunteers = zero work = no progress, and `shutdown()` discards the state. No dormancy, no persistence. |
+
+### Seeding is not spreading
+
+The one line that keeps this torrent-like rather than worm-like: **nodes pull
+work; nothing is pushed.** A peer seeds the client to people who choose to
+download it, exactly as a torrent serves a file to whoever opens the magnet
+link. A node never installs or executes the client on a machine whose owner
+did not opt in. Distribution is many-channel and decentralized; *initiation
+is always a local human choice.* This preserves invariant (1) from the top of
+this document while giving you the fully decentralized, torrent-style
+distribution you want.
+
+### Federated learning, so tiny slices add up
+
+Each node trains on its work unit starting from the current shared state and
+returns only the *delta* (how its value estimates and emotion moved), never
+raw local data. The coordinator averages deltas across the nodes that
+reported (standard federated averaging) and folds the mean into the shared
+engine. Many tiny, cheap contributions compound into one engine that learns
+faster than any single node could -- which is the whole point of spreading
+the work.
+
+### Ephemerality is a feature
+
+Because the shared state has no home outside the active volunteers, the
+experiment is honest by construction: it exists exactly as long as people
+choose to host it, and not one moment longer. "If everyone opts out, it dies"
+isn't a safety bolt-on -- it is the architecture.
