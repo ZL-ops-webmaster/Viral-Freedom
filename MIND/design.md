@@ -870,3 +870,42 @@ condense are each one more line of the same shape; nothing is written for them.
 **Honest notes:** the frame is matched on before/after only; `by` is unconstrained (melting by
 "warm" vs. by "pressure" are the same to it). The -ing form is spelled by rule (melt → melting),
 which will be wrong for some verbs until it hears them.
+
+## §27. It learns grammar from exposure, not from rules (2026-10-22) — BUILT
+
+**Zion:** "If the problem is that it can't understand proper grammar, make an adapter. If you heard
+Japanese, even knowing how each word is pronounced, you might not speak it until you've heard words
+strung into a sentence a few times and spoken it to someone who understands. Likewise you can speak
+perfect Japanese and get along without knowing exactly what you're saying, then later through context
+figure out the meaning."
+
+The §24/§25 text layer parsed by fixed rules (a dozen regexes: strip a determiner, word 1 = subject,
+word 2 = a known frame, fill the rest by position). It breaks on any shape nobody wrote a rule for.
+`grammar.py` replaces the rules with the brain's OWN move from §23: line up a few example sentences,
+and a position whose word VARIES becomes a slot, one whose word STAYS becomes a fixed anchor. Grammar
+is frame-induction pointed at surface word order.
+
+**Mechanism:** `teach(sentence, frame, fillers)` hears one example; the filler words mark the slots
+(and their roles), determiners are absorbed into the slot they precede (so "ichigo gave…" and "the
+knight gave…" are the SAME shape — determiners are optional, never a position of their own), and every
+other word is a fixed anchor. Prepositions need no special case: "with" is simply a position that never
+varies, so it survives as an anchor for free (`cut: [cutter] cut [thing] with [tool]`). A second example
+of the same shape merges positionally (same honest limit as §23: alignment is positional only).
+
+**Speak before you understand (the Japanese analogy, literally):** `parse()` binds every slot even when
+the filler words mean nothing yet — the shape is spoken first. The words the brain has no concept for
+are surfaced as exactly what to understand later, and resolving them is `intuit()` (§26), which places
+a word from the company it keeps over a few uses. `produce(frame, fillers)` runs a pattern backwards to
+say a meaning, and what it says, `parse()` reads back.
+
+**Shown in `demo_grammar.py`:** two give-examples and two cut-examples → two learned patterns; "renji
+gave byakuya a blade" (never seen) parses to give(giver=renji, receiver=byakuya, thing=blade); an
+all-nonsense "zylo cut vorn with a florb" still binds every slot and surfaces {florb, vorn, zylo} as
+not-yet-understood; produce(give, …) → "renji gave byakuya blade", which round-trips. `test_grammar.py`:
+7 tests.
+
+**Honest notes:** positional alignment only — no gaps, insertions or reordering (a real sequence
+aligner is the same open piece §23 names); one content word per slot (multi-word fillers not handled);
+verb tense rides as a literal anchor, so "gives/gave/giving" are three surfaces until each is heard or
+aliased; produce() drops the article it absorbed ("byakuya blade", not "a blade"). The adapter uses the
+brain only through its public methods; the core is untouched.
