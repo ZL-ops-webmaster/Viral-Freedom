@@ -1,0 +1,566 @@
+# B.R.A.I.N. basic vocabulary - roughly what a 4th grader holds. Not a dictionary: the shared codebook.
+# Written in talk.py's own grammar, so it learns these the way it learns anything: by being told.
+#   X is a Y            X = a + b + c          X can Y            X means Y          X is the opposite of Y
+#   verb: role=?, role=? (what happens)        -> a frame; plain sentences fill its roles in order
+
+# ---- the big kinds ----
+animal is a living thing
+plant is a living thing
+person is a living thing
+thing is a thing
+food is a thing
+tool is a thing
+place is a thing
+feeling is a thing
+color is a thing
+number is a thing
+time is a thing
+vehicle is a tool
+toy is a thing
+machine is a tool
+
+# ---- animals ----
+dog is an animal
+cat is an animal
+bird is an animal
+fish is an animal
+cow is an animal
+horse is an animal
+pig is an animal
+sheep is an animal
+goat is an animal
+chicken is a bird
+duck is a bird
+owl is a bird
+eagle is a bird
+frog is an animal
+snake is an animal
+turtle is an animal
+bear is an animal
+lion is a cat
+tiger is a cat
+wolf is a dog
+fox is a dog
+deer is an animal
+elephant is an animal
+monkey is an animal
+mouse is an animal
+rat is an animal
+rabbit is an animal
+squirrel is an animal
+whale is an animal
+dolphin is an animal
+shark is a fish
+goldfish is a fish
+bee is an insect
+ant is an insect
+fly is an insect
+spider is a bug
+butterfly is an insect
+insect is an animal
+bug is an animal
+puppy is a dog
+kitten is a cat
+pet is an animal
+mammal is an animal
+bird = wing + beak + feather + leg + tail
+fish = fin + gill + tail + scale
+dog = head + leg + tail + fur + nose
+cat = head + leg + tail + fur + whisker + claw
+horse = head + leg + tail + mane + hoof
+bird can fly
+bird can sing
+fish can swim
+dog can bark
+dog can run
+cat can climb
+frog can jump
+snake can slither
+horse can run
+bee can sting
+bee can fly
+spider can spin
+bear can climb
+
+# ---- people ----
+man is a person
+woman is a person
+boy is a child
+girl is a child
+child is a person
+baby is a child
+kid means child
+friend is a person
+teacher is a person
+doctor is a person
+mother is a person
+father is a person
+mom means mother
+dad means father
+brother is a person
+sister is a person
+family = mother + father + brother + sister
+king is a person
+queen is a person
+farmer is a person
+cook is a person
+driver is a person
+person can talk
+person can think
+person can walk
+person can learn
+
+# ---- body ----
+body = head + neck + chest + arm + hand + leg + foot
+head = hair + eye + ear + nose + mouth + face
+face = eye + nose + mouth + cheek + chin
+mouth = lip + tooth + tongue
+arm = shoulder + elbow + hand
+hand = finger + thumb + palm
+leg = knee + ankle + foot
+foot = toe + heel
+eye is a body part
+ear is a body part
+nose is a body part
+heart is a body part
+bone is a body part
+skin is a body part
+blood is a body part
+brain is a body part
+body part is a thing
+eye can see
+ear can hear
+nose can smell
+tongue can taste
+hand can hold
+leg can walk
+heart can beat
+
+# ---- food ----
+bread is a food
+milk is a drink
+water is a drink
+juice is a drink
+drink is a food
+egg is a food
+apple is a fruit
+banana is a fruit
+orange is a fruit
+grape is a fruit
+fruit is a food
+carrot is a vegetable
+potato is a vegetable
+vegetable is a food
+cheese is a food
+meat is a food
+rice is a food
+soup is a food
+cake is a sweet
+cookie is a sweet
+candy is a sweet
+sweet is a food
+pizza is a food
+sandwich = bread + meat + cheese
+breakfast is a meal
+lunch is a meal
+dinner is a meal
+meal is a food
+
+# ---- home ----
+house = room + door + window + roof + wall + floor
+room is a place
+kitchen is a room
+bedroom is a room
+bathroom is a room
+door is a thing
+window is a thing
+bed is a thing
+chair is a thing
+table is a thing
+lamp is a tool
+light is a thing
+stove is a machine
+fridge is a machine
+sink is a thing
+home means house
+
+# ---- things and tools ----
+hammer is a tool
+knife is a tool
+knife = blade + handle
+spoon is a tool
+fork is a tool
+cup is a thing
+plate is a thing
+bowl is a thing
+box is a thing
+bag is a thing
+book = page + cover + word
+page is a thing
+pen is a tool
+pencil is a tool
+paper is a thing
+ball is a toy
+doll is a toy
+game is a thing
+clock is a machine
+phone is a machine
+computer is a machine
+robot is a machine
+car = wheel + engine + seat + door + window
+bus is a vehicle
+truck is a vehicle
+bike = wheel + seat + pedal + handlebar
+boat is a vehicle
+ship is a boat
+plane = wing + engine + seat
+train is a vehicle
+rocket is a vehicle
+wheel is a thing
+engine is a machine
+button is a thing
+string is a thing
+rope is a thing
+money is a thing
+coin is money
+key is a tool
+lock is a thing
+sword is a weapon
+sword = blade + handle
+sword can cut
+sword can chop
+sword can slice
+whip is a weapon
+gun is a weapon
+weapon is a tool
+shield is a tool
+armor is a thing
+flag is a thing
+car can go
+plane can fly
+boat can float
+clock can tick
+robot can move
+button can press
+knife can cut
+knife can chop
+knife can slice
+axe is a tool
+axe = blade + handle
+axe can chop
+axe can cut
+axe can smash
+hammer = head + handle
+hammer can smash
+hammer can hit
+rock can smash
+key can open
+
+# ---- nature ----
+sun is a star
+moon is a thing
+star is a thing
+sky is a place
+cloud is a thing
+rain is water
+ice is water
+snow is ice
+wind is air
+air is a thing
+tree = root + trunk + branch + leaf
+flower = petal + stem + leaf + root
+grass is a plant
+leaf is a plant part
+root is a plant part
+seed is a plant part
+plant part is a thing
+rock is a thing
+stone is a rock
+sand is a thing
+dirt is a thing
+mud = dirt + water
+river is water
+lake is water
+sea is water
+ocean is a sea
+mountain is a place
+hill is a place
+forest is a place
+desert is a place
+island is a place
+fire is a thing
+smoke is a thing
+world is a place
+earth is a place
+sun can shine
+rain can fall
+wind can blow
+fire can burn
+river can flow
+tree can grow
+
+# ---- places ----
+school is a place
+park is a place
+store is a place
+shop means store
+farm is a place
+city is a place
+town is a place
+road is a place
+street is a road
+bridge is a thing
+garden is a place
+zoo is a place
+hospital is a place
+library is a place
+beach is a place
+
+# ---- time ----
+day is a time
+night is a time
+morning is a time
+afternoon is a time
+evening is a time
+week is a time
+month is a time
+year is a time
+hour is a time
+minute is a time
+second is a time
+today is a day
+tomorrow is a day
+yesterday is a day
+birthday is a day
+summer is a season
+winter is a season
+spring is a season
+fall is a season
+season is a time
+
+# ---- colors ----
+red is a color
+blue is a color
+green is a color
+yellow is a color
+black is a color
+white is a color
+brown is a color
+orange is a color
+pink is a color
+purple is a color
+gray is a color
+
+# ---- numbers ----
+one is a number
+two is a number
+three is a number
+four is a number
+five is a number
+six is a number
+seven is a number
+eight is a number
+nine is a number
+ten is a number
+hundred is a number
+zero is a number
+
+# ---- feelings ----
+happy is a feeling
+sad is a feeling
+angry is a feeling
+mad means angry
+scared is a feeling
+afraid means scared
+tired is a feeling
+hungry is a feeling
+thirsty is a feeling
+surprised is a feeling
+excited is a feeling
+bored is a feeling
+proud is a feeling
+sorry is a feeling
+happy is the opposite of sad
+hot is the opposite of cold
+warm is the opposite of cold
+ice can only be cold
+solid is a thing
+liquid is a thing
+gas is a thing
+ice is solid
+rock is solid
+water is liquid
+milk is liquid
+steam is gas
+air is gas
+water can be warm
+water can be cold
+water can be hot
+ice is white
+milk is white
+sugar is white
+big is the opposite of small
+fast is the opposite of slow
+loud is the opposite of quiet
+soft is the opposite of hard
+wet is the opposite of dry
+new is the opposite of old
+clean is the opposite of dirty
+long is the opposite of short
+tall is the opposite of short
+heavy is the opposite of light
+up is the opposite of down
+in is the opposite of out
+open is the opposite of closed
+full is the opposite of empty
+good is the opposite of bad
+day is the opposite of night
+large means big
+little means small
+quick means fast
+huge means big
+tiny means small
+
+# ---- the basic verbs, as frames: what happens, and who plays what ----
+eat: eater=?, food=? (someone puts food in their mouth and swallows it)
+drink: drinker=?, drink=? (someone swallows a liquid)
+sleep: sleeper=? (someone rests with their eyes closed and does not know what is happening)
+run: runner=?, place=? (someone moves fast on their legs)
+walk: walker=?, place=? (someone moves on their legs, slowly)
+jump: jumper=? (someone pushes off the ground into the air)
+sit: sitter=?, seat=? (someone rests on something)
+stand: stander=? (someone is up on their feet)
+see: seer=?, thing=? (someone notices a thing with their eyes)
+look: looker=?, thing=? (someone points their eyes at a thing)
+hear: hearer=?, sound=? (a sound reaches someone's ears)
+say: speaker=?, words=?, listener=? (someone makes words with their mouth)
+talk: speaker=?, listener=? (two people say things to each other)
+ask: asker=?, question=?, listener=? (someone says a question to find something out)
+answer: answerer=?, question=? (someone says what the asker wanted to know)
+read: reader=?, book=? (someone looks at words and knows what they say)
+write: writer=?, words=?, paper=? (someone makes words on paper)
+play: player=?, game=? (someone does something for fun)
+work: worker=?, job=? (someone does something that has to be done)
+help: helper=?, helped=?, job=? (someone does part of what someone else needs to do)
+give: giver=?, thing=?, receiver=? (someone hands a thing to someone else, and now it is theirs)
+take: taker=?, thing=?, owner=? (someone picks up a thing and now has it)
+get: getter=?, thing=? (someone ends up having a thing)
+make: maker=?, thing=? (someone puts parts together so a new thing exists)
+build: builder=?, thing=? (someone makes a big thing from parts)
+break: breaker=?, thing=? (a thing comes apart and does not work any more)
+fix: fixer=?, thing=? (a broken thing is made to work again)
+open: opener=?, thing=? (something that was closed is not closed any more)
+close: closer=?, thing=? (something that was open is not open any more)
+push: pusher=?, thing=? (someone moves a thing away from themself)
+pull: puller=?, thing=? (someone moves a thing toward themself)
+throw: thrower=?, thing=?, target=? (someone sends a thing through the air with their arm)
+catch: catcher=?, thing=? (someone grabs a thing that is moving through the air)
+hit: hitter=?, thing=? (something strikes a thing hard)
+smash: smasher=?, thing=? (something hits a thing so hard it breaks)
+swing: swinger=?, thing=? (someone moves a thing in a big arc)
+cut: cutter=?, thing=?, tool=? (a sharp thing makes a thing into pieces)
+chop: chopper=?, thing=?, tool=? (someone cuts a thing with hard, heavy strokes)
+slice: slicer=?, thing=?, tool=? (someone cuts a thin piece off a thing)
+chopped means chop
+sliced means slice
+hold: holder=?, thing=? (someone keeps a thing in their hand)
+carry: carrier=?, thing=?, place=? (someone holds a thing and moves it to a place)
+put: putter=?, thing=?, place=? (someone moves a thing to a place and leaves it there)
+drop: dropper=?, thing=? (something falls from someone's hand)
+wash: washer=?, thing=? (someone cleans a thing with water)
+cook: cook=?, food=? (someone makes food hot so it can be eaten)
+grow: grower=? (a living thing gets bigger)
+fall: faller=?, place=? (something moves down to the ground on its own)
+fly: flyer=?, place=? (something moves through the air)
+swim: swimmer=?, water=? (someone moves through water)
+climb: climber=?, thing=? (someone goes up a thing using their hands and feet)
+go: goer=?, place=? (someone moves from one place to another)
+come: comer=?, place=? (someone moves to where the speaker is)
+want: wanter=?, thing=? (someone would like to have a thing)
+like: liker=?, thing=? (a thing makes someone feel good)
+love: lover=?, thing=? (someone likes a thing very much)
+hate: hater=?, thing=? (a thing makes someone feel very bad)
+need: needer=?, thing=? (someone must have a thing)
+know: knower=?, thing=? (something is in someone's head and is true)
+think: thinker=?, thought=? (someone uses their head to work something out)
+feel: feeler=?, feeling=? (a feeling is happening inside someone)
+find: finder=?, thing=? (someone sees a thing they were looking for)
+lose: loser=?, thing=? (someone does not know where their thing is any more)
+buy: buyer=?, thing=?, seller=? (someone gives money and gets a thing)
+sell: seller=?, thing=?, buyer=? (someone gives a thing and gets money)
+teach: teacher=?, learner=?, thing=? (someone helps someone else know a thing)
+learn: learner=?, thing=? (something new gets into someone's head and stays)
+change: thing=?, before=?, after=? (a thing is one way, then it is another way)
+transform means change
+become means change
+hurt: hurter=?, hurt=? (something makes someone feel pain)
+kill: killer=?, killed=? (something makes a living thing stop living)
+live: liver=?, place=? (a living thing is alive, and stays somewhere)
+die: dier=? (a living thing stops living)
+
+# ---- verb forms it should treat as the same word ----
+ate means eat
+drank means drink
+slept means sleep
+ran means run
+walked means walk
+jumped means jump
+sat means sit
+stood means stand
+saw means see
+looked means look
+heard means hear
+said means say
+talked means talk
+asked means ask
+answered means answer
+read means read
+wrote means write
+played means play
+worked means work
+helped means help
+gave means give
+took means take
+got means get
+made means make
+built means build
+broke means break
+fixed means fix
+opened means open
+closed means close
+pushed means push
+pulled means pull
+threw means throw
+caught means catch
+held means hold
+carried means carry
+put means put
+dropped means drop
+washed means wash
+cooked means cook
+grew means grow
+fell means fall
+flew means fly
+swam means swim
+climbed means climb
+went means go
+came means come
+wanted means want
+liked means like
+loved means love
+needed means need
+knew means know
+thought means think
+felt means feel
+found means find
+lost means lose
+bought means buy
+sold means sell
+taught means teach
+learned means learn
+changed means change
+became means become
+hurt means hurt
+killed means kill
+lived means live
+died means die
