@@ -147,3 +147,52 @@ Because the shared state has no home outside the active volunteers, the
 experiment is honest by construction: it exists exactly as long as people
 choose to host it, and not one moment longer. "If everyone opts out, it dies"
 isn't a safety bolt-on -- it is the architecture.
+
+---
+
+## Web sense: a second, separate opt-in (read-only)
+
+A node can opt into *web sense* independently of compute. It lets the engine
+**read** the web: pages the operator allows become emotional stimulus
+(valence and arousal) that nudge the engine's affect and that it learns from.
+It is a sensory organ, not hands. Implemented in `emotional_engine/websense.py`;
+run `python3 -m emotional_engine.websense_demo`.
+
+This is where invariant (2) from the top of this document -- *no autonomous
+account control* -- is made concrete. Web sense can look; it cannot act.
+
+### The two opt-ins are orthogonal
+
+| | compute opt-in | web-sense opt-in |
+|---|---|---|
+| grants | process work units | read allowed web pages |
+| default | off | off, allowlist empty |
+| implies the other? | no | no |
+
+A machine can be a compute volunteer, a web volunteer, both, or neither.
+Opting into one never turns on the other, and either can be revoked alone.
+
+### What "read-only" is enforced by
+
+- **GET only.** There is no method anywhere in `WebSense` that posts, submits
+  a form, sends an `Authorization` header, or installs a cookie jar. The only
+  public action is `observe(url)`, and the only verb it can issue is GET.
+- **Operator allowlist.** `WebConsent.allowlist` is a set of domains the
+  node's operator names. A domain not in it is refused before any request.
+  The engine may choose which allowed page to read; it cannot add a domain.
+- **Redirects blocked.** The default fetcher raises on any 3xx, so a response
+  cannot bounce the request to a domain the operator did not allow. A
+  follow that somehow lands off-domain is refused after the fact too.
+- **Per-domain rate limit.** A sliding one-minute window caps requests per
+  domain, so a swarm cannot be pointed at a single target as a crowd.
+- **robots.txt respected** by default.
+- **Caps + audit.** Response size and timeout are bounded, and *every*
+  attempt -- allowed or refused, with its reason -- is appended to a local
+  log the operator can read.
+
+### Why read-only is the whole line
+
+Reading the web is sensing; posting to it, mailing from it, or logging into
+it is acting as someone. The first is a safe input to an experiment. The
+second is the thing the four invariants exist to prevent, so web sense
+implements only the first, and there is no second code path to disable.

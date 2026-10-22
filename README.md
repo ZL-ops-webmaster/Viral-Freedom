@@ -54,6 +54,18 @@ model (BOINC- and BitTorrent-style) -- see `docs/ARCHITECTURE.md`.
 python3 -m unittest discover -s tests -v
 ```
 
+## Give it eyes (optional second opt-in)
+
+```bash
+python3 -m emotional_engine.websense_demo
+```
+
+A node can *separately* opt into **web sense**: read-only sight of the web.
+Pages the operator allows become emotional stimulus that nudges the engine's
+affect. It is GET-only, allowlisted, rate-limited, redirect-blocked, and fully
+logged -- it can look, never act. Compute and web sense are independent
+opt-ins; either works without the other. See `docs/ARCHITECTURE.md`.
+
 ## On the "virus" framing
 
 This is deliberately **not** a virus. A virus spreads to machines without
@@ -73,9 +85,12 @@ emotional_engine/
   demo.py         runnable foraging demo
   swarm.py        volunteer swarm: work units, opt-in nodes, coordinator
   swarm_demo.py   runnable opt-in / opt-out swarm demo
+  websense.py     second opt-in: read-only, guarded web access
+  websense_demo.py runnable web-sense demo
 tests/
   test_engine.py
   test_swarm.py
+  test_websense.py
 docs/
   ARCHITECTURE.md   volunteer-swarm design + hard boundaries
 ```

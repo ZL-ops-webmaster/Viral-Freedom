@@ -30,6 +30,7 @@ from dataclasses import dataclass, field
 from typing import Callable, Dict, Hashable, List, Optional, Sequence
 
 from .engine import EmotionalLearningEngine
+from .websense import WebConsent, WebObservation, WebSense
 
 
 # An "application" every node agrees on, like the science app in BOINC. Here
@@ -57,7 +58,8 @@ class VolunteerNode:
     def __init__(self, node_id: str, app: Application):
         self.node_id = node_id
         self.app = app
-        self._opted_in = False
+        self._opted_in = False          # compute opt-in
+        self._web: WebSense | None = None  # web-sense opt-in (separate)
 
     def opt_in(self) -> None:
         self._opted_in = True
@@ -68,6 +70,26 @@ class VolunteerNode:
     @property
     def active(self) -> bool:
         return self._opted_in
+
+    # -- the SECOND opt-in: web sense, independent of compute --------------
+
+    def opt_in_web(self, consent: WebConsent, fetcher=None) -> None:
+        """Separately grant this node read-only web sight. Compute opt-in is
+        neither required nor implied; this is its own choice."""
+        self._web = WebSense(consent, fetcher=fetcher)
+
+    def opt_out_web(self) -> None:
+        self._web = None
+
+    @property
+    def web_active(self) -> bool:
+        return self._web is not None and self._web.consent.enabled
+
+    def observe_web(self, url: str) -> WebObservation:
+        """Read a page through this node's web sense. Refuses if not opted in."""
+        if self._web is None:
+            return WebObservation(url=url, ok=False, reason="web_sense_not_opted_in")
+        return self._web.observe(url)
 
     def process(self, unit: WorkUnit, shared_state: dict) -> Optional[dict]:
         """Run one tiny slice on a local copy of the shared engine.
