@@ -909,3 +909,20 @@ aligner is the same open piece §23 names); one content word per slot (multi-wor
 verb tense rides as a literal anchor, so "gives/gave/giving" are three surfaces until each is heard or
 aliased; produce() drops the article it absorbed ("byakuya blade", not "a blade"). The adapter uses the
 brain only through its public methods; the core is untouched.
+
+### §27a. Grammar with no labels at all (2026-10-23) — BUILT
+
+Taking §27 the rest of the way (Zion: "take the adapter there next"). `observe(sentences)` induces
+patterns from RAW sentences with no roles marked: strip the function words, bucket sentences that put
+the same verb in the same place, and read the columns — a column that never varies is an anchor, one
+that varies is a slot. Slots are auto-named s0/s1/… (as §23 names an unnarrated position step-k); the
+verb names the frame. `name_slots(frame, {...})` attaches meaning afterwards — the shape is learned
+first, understood later. The preposition "with" is discovered as an anchor unaided, because it is simply
+the column that never varies. `demo_grammar_auto.py`; test_grammar.py now 12 tests.
+
+**Honest notes:** grouping assumes English SVO with a one-word subject (the verb is taken to be the
+second content word) — passives, questions, and subjectless imperatives are not induced; a slot that
+happens to hold the same word across every example (a shared subject in a tiny corpus) is misread as an
+anchor until more varied examples arrive; still one word per slot and positional alignment only (the
+same open sequence-aligner §23 names). It is unsupervised shape induction, not yet unsupervised role
+discovery — which slot is the giver still waits on narration or intuit().

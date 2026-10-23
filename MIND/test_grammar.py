@@ -73,3 +73,52 @@ class TestTwoShapesCoexist(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestAutonomousInduction(unittest.TestCase):
+    """observe(): learn shapes from raw sentences, no roles marked."""
+
+    def setUp(self):
+        self.g = Grammar()
+        self.g.observe([
+            "ichigo gave rukia a sword",
+            "the knight gave the king a crown",
+            "renji gave byakuya a blade",
+        ])
+
+    def test_induces_verb_framed_pattern(self):
+        gives = [p for p in self.g.patterns if p.frame == "gave"]
+        self.assertEqual(len(gives), 1)
+        # subject, receiver, thing vary -> 3 slots; "gave" is the one anchor.
+        self.assertEqual(gives[0].slots(), ["s0", "s1", "s2"])
+        lits = [t.value for t in gives[0].toks if t.kind == "lit"]
+        self.assertEqual(lits, ["gave"])
+
+    def test_parses_novel_unlabelled(self):
+        r = self.g.parse("zaraki gave yachiru a candy")
+        self.assertEqual(r["frame"], "gave")
+        self.assertEqual(r["fillers"], {"s0": "zaraki", "s1": "yachiru", "s2": "candy"})
+
+    def test_preposition_becomes_anchor_unsupervised(self):
+        g = Grammar()
+        g.observe([
+            "the cook cut the bread with a knife",
+            "the knight cut the rope with a sword",
+            "ichigo cut the hollow with a zanpakuto",
+        ])
+        cuts = [p for p in g.patterns if p.frame == "cut"]
+        self.assertEqual(len(cuts), 1)
+        lits = [t.value for t in cuts[0].toks if t.kind == "lit"]
+        self.assertEqual(lits, ["cut", "with"])           # verb AND preposition, unaided
+
+    def test_meaning_attached_later(self):
+        # The shape was learned unlabelled; narration names the slots after.
+        self.g.name_slots("gave", {"s0": "giver", "s1": "receiver", "s2": "thing"})
+        r = self.g.parse("zaraki gave yachiru a candy")
+        self.assertEqual(r["fillers"],
+                         {"giver": "zaraki", "receiver": "yachiru", "thing": "candy"})
+
+    def test_single_example_is_not_a_shape(self):
+        g = Grammar()
+        made = g.observe(["ichigo gave rukia a sword"])   # one example only
+        self.assertEqual(made, [])

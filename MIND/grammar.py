@@ -207,6 +207,65 @@ class Grammar:
                 out.append(fillers[t.value])
         return " ".join(out)
 
+    # -- autonomous induction: slots from raw sentences, no labels --------
+
+    def observe(self, sentences: List[str], min_group: int = 2) -> List["Pattern"]:
+        """Induce patterns from RAW sentences with NO roles marked.
+
+        The Japanese analogy taken all the way: nobody says which word is the
+        giver. Strip the optional function words, group sentences that put the
+        same verb in the same place, and read the columns -- a column whose
+        word never changes is a fixed anchor, a column whose word varies is a
+        slot. Slots are auto-named (s0, s1, ...) exactly as the brain names an
+        unnarrated frame position step-k (design.md §23); the verb names the
+        frame. Meaning (which slot is the giver) is attached later, by
+        narration or by the brain's intuit() -- not needed to learn the shape.
+        """
+        from collections import defaultdict
+        buckets: Dict[tuple, List[tuple]] = defaultdict(list)
+        for sent in sentences:
+            content = [w for w in _words(sent) if w not in DETS]
+            if len(content) >= 2:                       # need a subject and a verb
+                buckets[(len(content), content[1])].append((sent, content))
+
+        made: List[Pattern] = []
+        for (length, verb), group in buckets.items():
+            if len(group) < min_group:
+                continue                                # one example is not a shape
+            toks: List[Tok] = []
+            slot_k = 0
+            for col in range(length):
+                words_here = {c[col] for _, c in group}
+                if len(words_here) == 1:                # never varied -> anchor
+                    toks.append(Tok("lit", group[0][1][col]))
+                else:                                   # varied -> a slot
+                    toks.append(Tok("slot", f"s{slot_k}"))
+                    slot_k += 1
+            shape = Pattern(verb, toks).shape()
+            existing = next((p for p in self.patterns
+                             if p.frame == verb and p.shape() == shape), None)
+            if existing:
+                existing.examples += len(group)
+                existing.heard.extend(s for s, _ in group)
+            else:
+                p = Pattern(verb, toks, len(group), [s for s, _ in group])
+                self.patterns.append(p)
+                made.append(p)
+        return made
+
+    def name_slots(self, frame: str, names: Dict[str, str]) -> bool:
+        """Attach meaning after the fact: rename a frame's auto slots (s0->giver).
+        This is narration arriving later, the shape already learned."""
+        changed = False
+        for p in self.patterns:
+            if p.frame != frame:
+                continue
+            for t in p.toks:
+                if t.kind == "slot" and t.value in names:
+                    t.value = names[t.value]
+                    changed = True
+        return changed
+
     # -- inspection --------------------------------------------------------
 
     def known(self) -> List[str]:
