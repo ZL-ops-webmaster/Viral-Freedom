@@ -982,3 +982,37 @@ through of feature vectors — this is where real grounding, §7, lives), recogn
 (nearest/explain/deviations — the sense that drives action), and concept formation/memory (learn,
 split, recall, sleep). The other narration surfaces that still build descriptor words inline
 (`relation()`, want paths, `web()`) are later candidates to route through the seeing cortex too.
+
+### §28b. The rest of the brain, carved into cortices (2026-10-31) — DONE (first pass)
+
+Zion: "Follow a similar methodology for the rest of the brain."
+
+With `core.py` holding the shared substrate (§28 prerequisite), the remaining regions move into their
+own files. The rule that keeps it safe: `__init__` and every class constant stay on the `Brain` base,
+and only methods move — so any method can still call `self.<const>` or another region's method, because
+it all resolves on the one Brain instance. The Brain is now the coordinator that composes the cortices.
+
+Regions now in `cortex/`:
+  - feeling.py     — surprise/satisfaction pulses; mood from signals handed in.          [own state]
+  - seeing.py      — the percept (narration of a sense); lesionable (blindsight).        [own state]
+  - motivation.py  — wanting: desires derived from feeling; valence_of/source_of.        [5 methods]
+  - language.py    — the structural layer: structs, frames, episodes, roles, intuition,
+                     the web, doubles, context resolution.                               [32 methods]
+  - thinking.py    — predict / imagine / wonder / expectation / mint / the think() loop. [7 methods]
+
+What stays on the Brain base is the PERCEPTUAL SUBSTRATE and its coordination: recognition
+(nearest/explain/describe/tokens), sensory memory (_record, obs/said/weight/reward/src), concept
+formation (learn/_experience/_learn, the split machinery, idle), memory over time (recall, sleep,
+forgetting), and tree restructuring (_generalize_all and friends). brain.py went 1366 -> 626 lines.
+
+Behaviour-preserving: all 18 demos, talk.py --script, and the grammar tests are byte-identical to the
+previous commit (verified by diffing against a clean HEAD worktree, ignoring printed timings).
+
+**Honest notes on the split.** feeling and seeing own isolated state and communicate through an
+explicit interface — the full "sector that talks to other sectors" model. motivation/language/thinking
+are mixins: their LOGIC lives in its own file (the stated goal — no longer one file read all at once),
+but they still share the Brain's state through `self`, the way cortical areas share one workspace. The
+next depth, where it earns its keep, is giving language and thinking their own state objects (structs,
+hypotheses) and turning the remaining `self.nodes` reaches into explicit calls on a perception region —
+the same move feeling and seeing already model. The perceptual substrate itself still wants its three
+internal sections drawn (encode / recognise / form), per §28a.
