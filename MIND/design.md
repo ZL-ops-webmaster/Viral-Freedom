@@ -926,3 +926,30 @@ happens to hold the same word across every example (a shared subject in a tiny c
 anchor until more varied examples arrive; still one word per slot and positional alignment only (the
 same open sequence-aligner §23 names). It is unsupervised shape induction, not yet unsupervised role
 discovery — which slot is the giver still waits on narration or intuit().
+
+## §28. Breaking the brain into cortices (2026-10-31) — STARTED
+
+Zion: "Break the brain into its own cortices. As one file it's like looking at the entire brain at
+once. But your brain operates between sectors and communicates between them to get sight, taste,
+imagination and every other sense."
+
+`brain.py` was one 1366-line class holding every kind of state at once. A real brain is regions that
+each do one job and pass signals. The new `cortex/` package pulls those regions out one at a time,
+each owning its state and exposing a small interface, with the Brain as the coordinator that wires
+them. Behaviour-preserving: every extraction keeps all 17 demos, talk.py, and the tests identical
+(verified by diffing demo output before/after — only the printed wall-clock seconds move).
+
+**First region out — `cortex/feeling.py`.** It owns the two pulses, surprise and satisfaction. It does
+NOT own unease or curiosity as stored drives: those are read off signals the other regions hand in when
+feeling is asked how it feels — unexplained memories from perception, open questions from thinking.
+That hand-in is the point. Where the old code had every method poke one shared `self.affect` dict, the
+regions now talk through an interface: perception calls `feeling.satisfy(gain)` on a split and
+`feeling.jolt(d)` on a miss; thinking reads `feeling.unease` to decide whether to consolidate, and
+calls `feeling.fade()` when a thought ends; `feel()` asks the cortex for the mood, handing it what
+perception and thinking are holding. Same behaviour, but the communication is explicit instead of a
+dictionary everyone reaches into.
+
+**Planned next regions (each carved when it proves clean, demos staying green):** perception (the
+concept tree, senses, split/compose, memory), language (structs, frames, episodes, intuition),
+motivation (wanting), thinking (predict/imagine/wonder/idle). The structural layer is the biggest and
+the §22 namespace bug is the clearest argument for giving it its own home.
