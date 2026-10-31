@@ -1016,3 +1016,34 @@ next depth, where it earns its keep, is giving language and thinking their own s
 hypotheses) and turning the remaining `self.nodes` reaches into explicit calls on a perception region —
 the same move feeling and seeing already model. The perceptual substrate itself still wants its three
 internal sections drawn (encode / recognise / form), per §28a.
+
+### §28c. Language promoted to a full component (2026-10-31) — DONE
+
+Zion: "Promote language to its own component. English, coding languages, and other languages all land
+in this region. Coding is technically a skill, but it's closer to an understanding of a language and
+systems — language + linguistics — so coding is a language."
+
+Language is no longer a mixin sharing the Brain's `self`. `cortex/language.py` now defines a `Language`
+class that OWNS its state — structs, role_fills, same, episodes, episode_labels — and reaches the rest
+of the brain through `self.brain` (perception's nearest/nodes/obs, thinking's _mint, the logger). Every
+`self.X` inside the 32 methods that referred to something the region does not own was rewritten to
+`self.brain.X` (21 such reaches); the region's own methods and state stay `self.X`.
+
+The Brain keeps the public surface intact so nothing else changes: the five state names are exposed as
+get/set properties that delegate to the component (so talk.py's save reads them and its load rebinds
+them, unchanged), and the 32 methods are reached through `__getattr__`, which forwards to the component
+only when the Brain's own lookup misses. This is the same "sector with its own state, talked to through
+an interface" shape as feeling and seeing, now on the region that holds the most state.
+
+Scope of the region, per Zion: natural language (English and others) and formal/coding languages are
+one faculty here — understanding a language and its systems — so a coding language is learned as a
+language (handles, structures, roles, episodes), not a separate skill module.
+
+Behaviour-preserving: all 18 demos, talk.py --script, and the grammar tests are byte-identical to the
+previous commit; a save/load round-trip recovers 453 structs and answers "what did cat do?" correctly,
+confirming the property setters that load() drives.
+
+**Still mixins (logic split out, state still shared through self):** motivation and thinking. Promoting
+thinking next means giving it its own `hypotheses`/`tokens_spent` and reaching perception + feeling +
+language through references. Perception's own internal sections (encode / recognise / form, §28a) remain
+to be drawn.

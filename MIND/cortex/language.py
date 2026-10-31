@@ -13,7 +13,18 @@ from core import (
 )
 
 
-class LanguageCortex:
+class Language:
+    """A full component now, not a mixin: it OWNS its state and reaches the rest of the
+    brain through `self.brain`. English, other natural languages, and coding languages all
+    land here -- coding is the understanding of a language and its systems, so it is a language."""
+    def __init__(self, brain):
+        self.brain = brain                      # coordinator: perception/thinking reached through it
+        self.structs: dict = {}                 # structural concepts: handle -> structure
+        self.role_fills = Counter()             # (role, filler) -> times seen
+        self.same: dict = {}                    # simple equivalences (transform = change)
+        self.episodes: dict = {}                # name -> ordered experiences
+        self.episode_labels: dict = {}          # name -> narration's labels per position
+
     def _link_compound(self, c: Concept, word: str):
         """A compound of known CONCEPT handles wires the web: 'whale shark' is-a shark (the head) and
         is linked to whale (the modifier) - connected to whales despite the differences. 'shark teeth'
@@ -28,7 +39,7 @@ class LanguageCortex:
             m = self.concept_for_word(p)
             if m is not None and m is not c:
                 c.links.append(("assoc", m)); m.links.append(("assoc", c))
-                self.log(f"  LINKED: '{word}' <-> {m.label}  (named after it; connected despite the differences)")
+                self.brain.log(f"  LINKED: '{word}' <-> {m.label}  (named after it; connected despite the differences)")
 
     @staticmethod
     def _is_ancestor(a: Concept, c: Concept) -> bool:
@@ -51,7 +62,7 @@ class LanguageCortex:
             "is": up + [g.label for r, g in c.links if r == "is-a"],
             "kinds": [k.label for k in c.children] + [k.label for r, k in c.links if r == "has-kind"],
             "linked": [m.label for r, m in c.links if r == "assoc"],
-            "mentioned_in": [n.label for n in self.nodes
+            "mentioned_in": [n.label for n in self.brain.nodes
                              if n is not c and word in n.label.replace("-", " ").split()],
         }
 
@@ -67,29 +78,29 @@ class LanguageCortex:
                 h = {"question": f"'{compound}' = {' + '.join(parts)}", "base": head, "descriptor": None,
                      "dim": None, "sign": 0, "proto": head.proto.copy(), "novelty": 0.0, "pull": 10.0,
                      "word": compound}
-                self.hypotheses.insert(0, h)
-                self.log(f"  HEARD '{compound}': I know {' and '.join(parts)} -> I expect a kind of "
+                self.brain.hypotheses.insert(0, h)
+                self.brain.log(f"  HEARD '{compound}': I know {' and '.join(parts)} -> I expect a kind of "
                          f"{head.label} that has to do with {', '.join(m.label for m in mods)}")
                 return h
-        D = self.descriptor_concepts()
+        D = self.brain.descriptor_concepts()
         for name, d in sorted(D.items(), key=lambda kv: -len(kv[0])):
             if compound.startswith(name) and len(compound) > len(name):
                 rest = compound[len(name):].lstrip("-_ ")
                 base = self.concept_for_word(rest)
                 if base is None:
                     continue
-                p, near, dist = self.imagine(base, [name])
+                p, near, dist = self.brain.imagine(base, [name])
                 h = {"question": f"'{compound}' = {name} + {rest}", "base": base, "descriptor": name,
                      "dim": d["dim"], "sign": d["sign"], "proto": p, "novelty": dist, "pull": dist + 10.0,
                      "word": compound}
-                self.hypotheses.insert(0, h)                   # it now EXPECTS this thing
-                self.log(f"  HEARD '{compound}': I know '{name}' and '{rest}' -> I expect a {name} {rest}")
+                self.brain.hypotheses.insert(0, h)                   # it now EXPECTS this thing
+                self.brain.log(f"  HEARD '{compound}': I know '{name}' and '{rest}' -> I expect a {name} {rest}")
                 return h
         return None
 
     def concepts_for_word(self, word: str) -> list[Concept]:
         """Every node this handle opens. More than one = a DOUBLE (to / too / two)."""
-        return [c for c in self.nodes if c.word_counts.get(word, 0) >= MIN_RECUR]
+        return [c for c in self.brain.nodes if c.word_counts.get(word, 0) >= MIN_RECUR]
 
     def resolve(self, word: str) -> tuple[Optional[Concept], list[Concept]]:
         """Pick which sense of a handle is meant, from CONTEXT: the candidate that most often lights
@@ -98,13 +109,13 @@ class LanguageCortex:
         cands = self.concepts_for_word(word)
         if len(cands) <= 1:
             return (cands[0] if cands else None), cands
-        active = self.active_nodes()
+        active = self.brain.active_nodes()
         if not active:
             return None, cands
         # company, re-read through the CURRENT tree: for each candidate, how often did one of ITS
         # observations arrive right after one of the kinds that are active now? (smoothed one step
         # up the tree). What's already in mind wins outright - it is the most expected thing of all.
-        who = [self.nearest(x) for x in self.obs]
+        who = [self.brain.nearest(x) for x in self.brain.obs]
         def near_active(c):
             return c in active or c.parent in active or any(a.parent is c for a in active)
         scored = []
@@ -112,7 +123,7 @@ class LanguageCortex:
             s = 1000.0 if c in active else 0.0
             for i, w in enumerate(who):
                 if w is c:
-                    for j in range(max(0, i - self.WINDOW), i):
+                    for j in range(max(0, i - self.brain.WINDOW), i):
                         if who[j] is c: continue
                         if who[j] in active: s += 1.0
                         elif near_active(who[j]): s += 0.5
@@ -132,7 +143,7 @@ class LanguageCortex:
         s.links = [("has-part", p) for p in parts]
         if old is not None:                                  # told what it's made of: keep what it IS
             s.links += [l for l in old.links if l[0] != "has-part"]
-        self.log(f"  DEFINED '{word}' = {' + '.join(parts)}")
+        self.brain.log(f"  DEFINED '{word}' = {' + '.join(parts)}")
         return s
 
     def _ensure(self, name: str):
@@ -153,8 +164,8 @@ class LanguageCortex:
         for other in list(self.structs.values()):            # only a FRAME can be specialised
             if other is not s and other.is_frame and other.roles and set(other.roles) < set(roles):
                 s.links.append(("is-a", other.name)); other.links.append(("has-kind", word))
-                self.log(f"  '{word}' specialises '{other.name}'  (adds: {', '.join(sorted(set(roles) - set(other.roles)))})")
-        self.log(f"  FRAME '{word}' = " + ", ".join(f"{r}={f or '?'}" for r, f in roles.items()))
+                self.brain.log(f"  '{word}' specialises '{other.name}'  (adds: {', '.join(sorted(set(roles) - set(other.roles)))})")
+        self.brain.log(f"  FRAME '{word}' = " + ", ".join(f"{r}={f or '?'}" for r, f in roles.items()))
         return s
 
     def episode(self, name: str, steps: list, labels: Optional[list] = None, who: Optional[str] = None) -> Optional[Struct]:
@@ -222,7 +233,7 @@ class LanguageCortex:
             if len(olab) < L and labels[:len(olab)] == olab:
                 if not any(r == "progression-of" and g == other for r, g in s.links):
                     s.links.append(("progression-of", other))
-                    self.log(f"  '{name}' is a progression of '{other}': the same steps, then more")
+                    self.brain.log(f"  '{name}' is a progression of '{other}': the same steps, then more")
         return s
 
     def equate(self, a: str, b: str):
@@ -368,7 +379,7 @@ class LanguageCortex:
         s.links.append(("is-a", frame)); self.structs[frame].links.append(("has-kind", word))
         for ro, f in fillers.items():
             self._ensure(f); self.role_fills[(ro, f)] += 1      # one more simple connection
-        self.log(f"  '{word}' is a {frame}:  " + ", ".join(f"{r}={f}" for r, f in fillers.items()))
+        self.brain.log(f"  '{word}' is a {frame}:  " + ", ".join(f"{r}={f}" for r, f in fillers.items()))
         return s
 
     def tell(self, word: str, listener: set, depth: int = 0) -> str:
@@ -448,7 +459,7 @@ class LanguageCortex:
         in the tree - surface be damned. Returns (overlap, other, shared parts, parts it could borrow)."""
         mine = self.structure_of(name)
         out = []
-        for other in list(self.structs) + [c.label for c in self.nodes]:
+        for other in list(self.structs) + [c.label for c in self.brain.nodes]:
             if other == name: continue
             theirs = self.structure_of(other)
             shared = mine & theirs
@@ -466,7 +477,7 @@ class LanguageCortex:
         t = self.structs.setdefault(target, Struct(target, []))
         t.borrowed.append((part, source))
         t.links.append(("has-part", part)); t.links.append(("like", source))
-        self.log(f"  BORROWED: {target} takes '{part}' from {source}"
+        self.brain.log(f"  BORROWED: {target} takes '{part}' from {source}"
                  + (f"  ({part} = {' + '.join(self.structs[part].parts)})" if part in self.structs and self.structs[part].parts else ""))
         return t
 
@@ -488,7 +499,7 @@ class LanguageCortex:
     def doubles(self) -> dict:
         """Handles that open more than one concept. Noticed, not hidden."""
         words = Counter()
-        for c in self.nodes:
+        for c in self.brain.nodes:
             for w, k in c.word_counts.items():
                 if k >= MIN_RECUR: words[w] += 1
         return {w: self.concepts_for_word(w) for w, k in words.items() if k > 1}

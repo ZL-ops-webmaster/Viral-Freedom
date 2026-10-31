@@ -34,12 +34,12 @@ from core import (
     Concept, Want, Struct,
 )
 from cortex.motivation import MotivationCortex
-from cortex.language import LanguageCortex
+from cortex.language import Language
 from cortex.thinking import ThinkingCortex
 
 
 # ---- the mind ----------------------------------------------------------------------------
-class Brain(MotivationCortex, LanguageCortex, ThinkingCortex):
+class Brain(MotivationCortex, ThinkingCortex):
     def __init__(self, log=print):
         self.nodes: list[Concept] = []
         self._next = 1
@@ -65,12 +65,49 @@ class Brain(MotivationCortex, LanguageCortex, ThinkingCortex):
         self.WINDOW = 3
         self.forgotten = 0                  # how many raw memories sleep() has let go
         self.wants: list[Want] = []         # what it desires (see Want); the "me" in "matters to me"
-        self.structs: dict[str, Struct] = {}   # structural concepts (see Struct), kept apart from the perceptual tree
-        self.role_fills: Counter = Counter()   # (role, filler) -> times seen: what has played what
-        self.same: dict = {}                   # simple equivalences: transform = change
-        self.episodes: dict = {}               # name -> list of ordered experiences (sequences of fillers)
-        self.episode_labels: dict = {}         # name -> what the narration called each position
+        # LANGUAGE is a full component now (cortex/language.py): it OWNS structs, role_fills,
+        # episodes and the rest, and reaches back here for perception. English, other natural
+        # languages and coding languages all live in it. Its API/state are exposed below so
+        # callers (and the other regions) still reach them through the Brain unchanged.
+        self.language = Language(self)
         self.WATCHED_DISCOUNT = 0.5         # feeling borrowed from watching counts half of living it
+
+    # -- language region, reached through the Brain (component in cortex/language.py) ------
+    @property
+    def structs(self): return self.language.structs
+    @structs.setter
+    def structs(self, v): self.language.structs = v
+
+    @property
+    def role_fills(self): return self.language.role_fills
+    @role_fills.setter
+    def role_fills(self, v): self.language.role_fills = v
+
+    @property
+    def same(self): return self.language.same
+    @same.setter
+    def same(self, v): self.language.same = v
+
+    @property
+    def episodes(self): return self.language.episodes
+    @episodes.setter
+    def episodes(self, v): self.language.episodes = v
+
+    @property
+    def episode_labels(self): return self.language.episode_labels
+    @episode_labels.setter
+    def episode_labels(self, v): self.language.episode_labels = v
+
+    def __getattr__(self, name):
+        # language methods (define/frame/intuit/tell/...) are reached transparently through the
+        # Brain. __getattr__ only fires when normal lookup misses, so own attrs/properties win.
+        lang = self.__dict__.get("language")
+        if lang is not None:
+            try:
+                return getattr(lang, name)
+            except AttributeError:
+                pass
+        raise AttributeError(name)
 
     # -- recognition ----------------------------------------------------------------------
     def nearest(self, x: np.ndarray) -> Concept:
