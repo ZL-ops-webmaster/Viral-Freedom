@@ -953,3 +953,32 @@ dictionary everyone reaches into.
 concept tree, senses, split/compose, memory), language (structs, frames, episodes, intuition),
 motivation (wanting), thinking (predict/imagine/wonder/idle). The structural layer is the biggest and
 the §22 namespace bug is the clearest argument for giving it its own home.
+
+### §28a. Perception is sections too: the sense vs the percept (2026-10-31) — STARTED
+
+Zion: "Perception is also broken into sections. One part works on understanding the raw input of
+sight; a different part is responsible for 'seeing' — that's why someone can be blind yet correctly
+grab a colored ball from three, or track a moving target with their eyes when a certain part is
+damaged."
+
+That is blindsight, and it is the line §2a already drew: a concept is a SENSE (holistic recognition,
+prior to description, able to drive action), and the description is a post-hoc NARRATION of that sense.
+Two stages. Damage the narration and the sense still fires — recognition and action survive, the
+conscious report does not.
+
+So perception is not carved as one region. The first perceptual sub-cortex out is the narration stage:
+`cortex/seeing.py`. It holds no concepts and does no recognition; it is handed a sense (concept + raw
+vector + deviations) and renders the reportable percept. `describe()` now runs recognition first
+(`explain()`, untouched) and then asks the seeing cortex to narrate. Because the stages are separate,
+`seeing.lesion()` darkens the percept while recognition keeps working.
+
+`demo_blindsight.py`: three colored balls; with seeing intact the brain recognises AND reports "red";
+lesioned, `nearest()` still selects the red ball correctly (it could still grab it) but `describe()`
+returns "(no percept)". The sense acts; the report is dark. All 18 demos, talk.py, and the tests stay
+identical by default (seeing starts intact; verified by before/after diff ignoring printed timings).
+
+**The sections still ahead inside perception:** the raw-input/encoding stage (today a trivial pass-
+through of feature vectors — this is where real grounding, §7, lives), recognition proper
+(nearest/explain/deviations — the sense that drives action), and concept formation/memory (learn,
+split, recall, sleep). The other narration surfaces that still build descriptor words inline
+(`relation()`, want paths, `web()`) are later candidates to route through the seeing cortex too.

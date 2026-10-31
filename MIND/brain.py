@@ -26,6 +26,7 @@ import math
 import numpy as np
 
 from cortex.feeling import Feeling
+from cortex.seeing import Seeing
 
 # ---- perceptual substrate -------------------------------------------------------------
 FEATURES = ["size", "bulk", "leg_count", "snout_len", "paw_width", "diet", "tail_len", "fur",
@@ -169,6 +170,9 @@ class Brain:
         # FEELING is its own cortex now (cortex/feeling.py): valence that directs attention
         # (design.md §5b). The other regions push signals to it and read the mood back.
         self.feeling = Feeling()
+        # SEEING is a perceptual sub-cortex (cortex/seeing.py): it turns a sense into a
+        # reportable percept. Separate from recognition, so it can be lesioned (blindsight).
+        self.seeing = Seeing()
         # CONTEXT = working memory: what is lit up right now, and what tends to show up together.
         # This is what resolves a DOUBLE (one handle, several concepts): "bat" after a ball is the club.
         # Company is NOT stored as node ids - it is re-read through the CURRENT tree from the raw
@@ -198,9 +202,10 @@ class Brain:
         return c, c.deviations(x)
 
     def describe(self, x: np.ndarray) -> str:
+        # recognition first (the sense), then the seeing cortex narrates it into
+        # a percept. Lesion seeing and this goes dark while explain() still works.
         c, dev = self.explain(x)
-        words = [c.label] + [dev_word(d, x[FEATURES.index(d)], c.proto[FEATURES.index(d)]) for d, _ in dev]
-        return " + ".join(words)
+        return self.seeing.narrate(c, x, dev, FEATURES, dev_word)
 
     def tokens(self, x: np.ndarray) -> int:
         _, dev = self.explain(x)
